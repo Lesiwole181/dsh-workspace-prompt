@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "dsh-workspace-prompt",
+    "description": "在侧边栏「设置 → 工作区提示词」里为每个工作区编写并保存提示词：用编辑/浏览两种模式写 Markdown，启用后在工作区的每次对话开始时注入 Agent，并在顶部提示注入结果。"
+  }
+}

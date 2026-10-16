@@ -1,0 +1,9 @@
+# dsh-workspace-prompt — 工作区提示词
+#
+# 一行 Host 插件：负责提示词存储、启用开关、会话→工作区解析、
+# 系统提示词注入，以及浏览器半调用的 /api/workspacePrompt/* 路由。
+#
+# 浏览器半由 package.json 的 dsh.client 声明，经 Client 模块表加载，无需在此登记。
+- insert:
+    - id: dsh-workspace-prompt
+      name: 'dsh-workspace-prompt'
