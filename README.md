@@ -20,7 +20,7 @@
 ### 方式 A：插件管理器（推荐）
 
 1. 打开 DSH 设置 → 插件（Plugins）；
-2. 添加并安装本地目录 `E:\DSHworkspaces\CreateDSHplugins\dsh-workspace-prompt`（或通过 DSH 的插件安装入口安装该目录）；
+2. 添加并安装本地目录（或通过 DSH 的插件安装入口安装该目录）；
 3. 安装完成后刷新页面，设置里即出现「工作区提示词」。
 
 > 安装会由 DSH 的插件管理器写入当前 profile（web / desktop 各自 profile 需分别安装一次），不会修改 deepseek-harness 本体文件。
@@ -28,11 +28,11 @@
 ### 方式 B：命令行（仅 Web profile）
 
 ```powershell
-dsh plugin --profile web add E:\DSHworkspaces\CreateDSHplugins\dsh-workspace-prompt
+dsh plugin --profile web add <插件所在路径>
 ```
 
 > **Desktop 例外**：`profiles/desktop` 由 Electron 应用独占管理，命令行安装不会被应用启用。
-> 请在 **Desktop 应用 → 设置 → 插件** 中安装同一目录 `E:\DSHworkspaces\CreateDSHplugins\dsh-workspace-prompt`。
+> 请在 **Desktop 应用 → 设置 → 插件** 中安装同一目录。
 
 ## 使用
 
