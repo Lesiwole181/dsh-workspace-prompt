@@ -2,7 +2,7 @@
   "name": "dsh-workspace-prompt",
   "version": "1.0.0",
   "private": true,
-  "description": "Per-workspace prompt editor and injector: a Settings page lists every workspace and edits its prompt in place, and an enabled workspace prompt is injected into the agent at the start of every conversation.",
+  "description": "Per-workspace prompt pages for DeepSeek Harness: choose workspaces in Settings, edit or browse a Markdown prompt per workspace, and inject the enabled prompt into the agent at the start of every conversation in that workspace.",
   "type": "module",
   "license": "MIT",
   "exports": {
@@ -15,19 +15,21 @@
     "index.js",
     "client.js",
     "client.api.js",
-    "client.dialog.js",
+    "client.app.js",
+    "client.i18n.js",
     "client.icons.js",
+    "client.manage-workspaces.js",
     "client.markdown.js",
-    "client.settings.js",
-    "client.store.js",
+    "client.prompt-editor.js",
     "client.styles.js",
-    "client.toast.js",
+    "client.workspace-list.js",
     "cordis.patch.yml",
-    "host/**/*.js",
+    "host/*.js",
     "locale/*.json",
     "icon.svg",
+    "docs/*.md",
     "README.md",
-    "docs/**/*.md"
+    "README.en.md"
   ],
   "dsh": {
     "bundle": {
@@ -42,5 +44,8 @@
         "@deepseek-ai/dsh-client-ui-settings"
       ]
     }
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
   }
 }

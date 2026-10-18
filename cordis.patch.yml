@@ -1,9 +1,11 @@
 # dsh-workspace-prompt — 工作区提示词
 #
-# 一行 Host 插件：负责提示词存储、启用开关、会话→工作区解析、
-# 系统提示词注入，以及浏览器半调用的 /api/workspacePrompt/* 路由。
+# 只插入一行 Host 插件；浏览器半由 package.json 的 dsh.client 声明，
+# 由 Client 模块表加载，无需在此登记。
 #
-# 浏览器半由 package.json 的 dsh.client 声明，经 Client 模块表加载，无需在此登记。
+# 可选配置（写在 profile 的 cordis.patch.yml 里覆盖本行 config）：
+#   promptDirectory: 提示词目录，绝对路径，默认 <本插件包根>/prompt
+#   stateDirectory:  状态目录，绝对路径，默认 <本插件包根>/state
 - insert:
     - id: dsh-workspace-prompt
       name: 'dsh-workspace-prompt'

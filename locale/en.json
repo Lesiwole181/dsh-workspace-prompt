@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "dsh-workspace-prompt",
-    "description": "Write and save a prompt for each workspace under Settings → Workspace prompt: compose Markdown in edit or browse mode, inject it into the agent at the start of every conversation in that workspace once enabled, and report the injection result in a toast."
+    "description": "Keep a Markdown prompt for each workspace: pick workspaces in Settings, edit or browse their prompts, and inject an enabled prompt into the agent at the start of every conversation in that workspace."
   }
 }

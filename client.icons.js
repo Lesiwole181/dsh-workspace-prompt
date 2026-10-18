@@ -1,13 +1,13 @@
 /**
- * Inline SVG icons, drawn with `React.createElement`.
+ * dsh-workspace-prompt — inline SVG icons.
  *
- * The plugin cannot import the shipped icon set (no `@deepseek-ai/*` dependency
- * in a zero-build bundle), so the three glyphs it needs are inlined here. Every
- * one draws with `currentColor` and inherits its size from a prop, which keeps
- * them inside the theme instead of carrying a colour of their own.
+ * A zero-build Client chunk may not import the shipped icon set (only the
+ * platform `react` seed is available), so the seven glyphs this page needs
+ * are drawn here with `React.createElement`. Every glyph shares one `<svg>`
+ * wrapper: 16×16 viewBox, `currentColor` strokes, `aria-hidden`, and a `size`
+ * prop, so it inherits the surrounding theme instead of carrying a colour.
  *
- * Self-contained chunk: `react` comes from the platform seed table, and nothing
- * else is needed.
+ * Self-contained chunk: `react` comes from the platform seed table.
  */
 window.__ModuleLoader__.load({
   id: 'dsh-workspace-prompt',
@@ -17,11 +17,12 @@ window.__ModuleLoader__.load({
     const h = React.createElement
 
     /**
-     * One `<svg>` wrapper shared by the glyphs.
-     * @param props - `{ size, children }`.
-     * @returns the svg element.
+     * Shared `<svg>` wrapper for every glyph.
+     * @param {number} size - Rendered edge length in pixels.
+     * @param {Array<*>} children - Path/rect children.
+     * @returns {object} The svg element.
      */
-    function svg({ size = 14, children }) {
+    function glyph(size, children) {
       return h('svg', {
         width: size,
         height: size,
@@ -37,54 +38,98 @@ window.__ModuleLoader__.load({
     }
 
     /**
-     * A document with lines: the workspace-prompt row button.
-     * @param props - `{ size }`.
-     * @returns the icon element.
+     * Left arrow: the editor's back control.
+     * @param {{ size?: number }} props - Optional rendered size.
+     * @returns {object} The icon element.
      */
-    function IconPromptOutline({ size = 14 }) {
-      return svg({
-        size,
-        children: [
-          h('path', { key: 'sheet', d: 'M3.5 2.5h6l3 3v8h-9z' }),
-          h('path', { key: 'fold', d: 'M9.5 2.5v3h3' }),
-          h('path', { key: 'l1', d: 'M5.75 8.5h4.5' }),
-          h('path', { key: 'l2', d: 'M5.75 11h3' }),
-        ],
-      })
+    function IconBack({ size = 14 }) {
+      return glyph(size, [
+        h('path', { key: 'shaft', d: 'M12.5 8H3.5' }),
+        h('path', { key: 'head', d: 'M7 4.5L3.5 8 7 11.5' }),
+      ])
     }
 
     /**
-     * A cross: the dialog's and the Toast's close button.
-     * @param props - `{ size }`.
-     * @returns the icon element.
+     * Right chevron: the "open workspace" affordance on a list row.
+     * @param {{ size?: number }} props - Optional rendered size.
+     * @returns {object} The icon element.
      */
-    function IconCloseOutline({ size = 14 }) {
-      return svg({
-        size,
-        children: [
-          h('path', { key: 'a', d: 'M4 4l8 8' }),
-          h('path', { key: 'b', d: 'M12 4l-8 8' }),
-        ],
-      })
+    function IconChevronRight({ size = 14 }) {
+      return glyph(size, [
+        h('path', { key: 'chevron', d: 'M6 3.5L10.5 8 6 12.5' }),
+      ])
     }
 
     /**
-     * A markdown sheet: reserved for surfaces that need a documentation glyph.
-     * @param props - `{ size }`.
-     * @returns the icon element.
+     * Cross: dismissing a notice.
+     * @param {{ size?: number }} props - Optional rendered size.
+     * @returns {object} The icon element.
      */
-    function IconMarkdownOutline({ size = 14 }) {
-      return svg({
-        size,
-        children: [
-          h('rect', { key: 'frame', x: 2.5, y: 3.5, width: 11, height: 9, rx: 1.5 }),
-          h('path', { key: 'm', d: 'M5 10V6.5l2 2 2-2V10' }),
-          h('path', { key: 'arrow', d: 'M10.75 6.5v3.5' }),
-          h('path', { key: 'head', d: 'M9.5 8.75l1.25 1.25 1.25-1.25' }),
-        ],
-      })
+    function IconClose({ size = 14 }) {
+      return glyph(size, [
+        h('path', { key: 'a', d: 'M4 4l8 8' }),
+        h('path', { key: 'b', d: 'M12 4l-8 8' }),
+      ])
     }
 
-    return { IconPromptOutline, IconCloseOutline, IconMarkdownOutline }
+    /**
+     * Plus: the primary "manage workspaces" action.
+     * @param {{ size?: number }} props - Optional rendered size.
+     * @returns {object} The icon element.
+     */
+    function IconPlus({ size = 14 }) {
+      return glyph(size, [
+        h('path', { key: 'h', d: 'M8 3.5v9' }),
+        h('path', { key: 'v', d: 'M3.5 8h9' }),
+      ])
+    }
+
+    /**
+     * A sheet of lined paper: a workspace prompt.
+     * @param {{ size?: number }} props - Optional rendered size.
+     * @returns {object} The icon element.
+     */
+    function IconPrompt({ size = 14 }) {
+      return glyph(size, [
+        h('path', { key: 'sheet', d: 'M3.5 2.5h6l3 3v8h-9z' }),
+        h('path', { key: 'fold', d: 'M9.5 2.5v3h3' }),
+        h('path', { key: 'line-1', d: 'M5.5 8.5h5' }),
+        h('path', { key: 'line-2', d: 'M5.5 11h3' }),
+      ])
+    }
+
+    /**
+     * Checkmark: an "added" badge or a successful state.
+     * @param {{ size?: number }} props - Optional rendered size.
+     * @returns {object} The icon element.
+     */
+    function IconCheck({ size = 14 }) {
+      return glyph(size, [
+        h('path', { key: 'check', d: 'M3 8.5l3 3 7-7' }),
+      ])
+    }
+
+    /**
+     * Warning triangle: the removal warning in the manage view.
+     * @param {{ size?: number }} props - Optional rendered size.
+     * @returns {object} The icon element.
+     */
+    function IconWarning({ size = 14 }) {
+      return glyph(size, [
+        h('path', { key: 'frame', d: 'M8 2.5l5.5 10.5h-11z' }),
+        h('path', { key: 'mark', d: 'M8 6.5v2.75' }),
+        h('path', { key: 'dot', d: 'M8 11.5v.01' }),
+      ])
+    }
+
+    return {
+      IconBack,
+      IconChevronRight,
+      IconClose,
+      IconPlus,
+      IconPrompt,
+      IconCheck,
+      IconWarning,
+    }
   },
 })

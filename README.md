@@ -1,132 +1,98 @@
-# dsh-workspace-prompt — 工作区提示词
+# dsh-workspace-prompt（工作区提示词）
 
-给每个**工作区**配一份提示词，并让它在**该工作区的每一次对话开始时自动注入 Agent**。
+给每个**工作区**维护一份 Markdown 提示词，并在启用后让它在该工作区**每次对话开始时自动注入 Agent**——不会新增对话气泡。
 
-- **入口**：**设置 → dsh-workspace-prompt**（设置面板左侧导航里的独立一页）。
-  页面列出所有工作区及其启用状态与字数。
-- **编辑器**：点某一行的「编辑提示词」后，编辑器**直接在设置页内打开**（不弹独立窗口）。
-  左上角是**启用开关**，右上角是「**← 返回**」（回到工作区列表），中间是「**编辑 / 浏览**」两种模式。
-  编辑模式可写可存；浏览模式只读、按 Markdown 渲染。
-- **注入**：开关打开后，该工作区内每次对话开始都会把提示词注入 Agent 的运行时上下文，
-  **不会新增对话气泡**（但它随上下文快照可见——见下文「提示词会不会出现在对话里？」）。
-- **反馈**：每次成功注入后屏幕顶部弹出一条提示，**5 秒自动关闭**，右上角也可手动关闭。
+- **入口**：设置 → 侧边栏「工作区提示词」。
+- **列表**：只显示**添加进此界面**的工作区；列表框右上方（与设置面板右上角「打开配置文件」对齐）的「管理工作区」按钮可批量添加/移除（移除会同时删除其提示词）。
+- **编辑**：点击列表中的任一工作区进入「管理该工作区的提示词」：
+  - 左上角「← 返回」回到列表；
+  - 提示词框右上角是**启用开关**；
+  - 支持「编辑 / 浏览」两种模式：编辑模式写 Markdown，**保存按钮在提示词框右下角**；浏览模式只读并按 Markdown 渲染；
+  - 每行/每页文案均支持**中文 / English**。
+- **注入**：开关打开且正文非空时，在该工作区的所有会话中，每次对话开始都会把提示词作为运行时上下文注入 Agent。提示词不会出现在对话气泡里；DSH 的会话日志/检查视图会保留运行时上下文快照（见下文说明）。
 
-> 插件在插件列表里显示的名字固定为 **`dsh-workspace-prompt`**，不随界面语言变化。
+> **插件显示名**：在「设置 → 插件」等插件界面里，本插件的显示名固定为 **`dsh-workspace-prompt`**，中文/English 两种语言模式下都相同；插件自己的设置页标题和侧边栏入口仍是「工作区提示词 / Workspace prompt」。
+
+## 安装
+
+本插件是一个标准 DSH bundle（`package.json` 的 `dsh.bundle.patch` + `dsh.client`），零第三方依赖、零构建。
+
+### 方式 A：插件管理器（推荐）
+
+1. 打开 DSH 设置 → 插件（Plugins）；
+2. 添加并安装本地目录 `E:\DSHworkspaces\CreateDSHplugins\dsh-workspace-prompt`（或通过 DSH 的插件安装入口安装该目录）；
+3. 安装完成后刷新页面，设置里即出现「工作区提示词」。
+
+> 安装会由 DSH 的插件管理器写入当前 profile（web / desktop 各自 profile 需分别安装一次），不会修改 deepseek-harness 本体文件。
+
+### 方式 B：命令行（仅 Web profile）
+
+```powershell
+dsh plugin --profile web add E:\DSHworkspaces\CreateDSHplugins\dsh-workspace-prompt
+```
+
+> **Desktop 例外**：`profiles/desktop` 由 Electron 应用独占管理，命令行安装不会被应用启用。
+> 请在 **Desktop 应用 → 设置 → 插件** 中安装同一目录 `E:\DSHworkspaces\CreateDSHplugins\dsh-workspace-prompt`。
 
 ## 使用
 
-1. 打开**设置**（侧边栏底部齿轮），在左侧导航选「**dsh-workspace-prompt**」。
-2. 在列表里找到目标工作区，点右侧「**编辑提示词**」——编辑器在同一页内展开。
-3. 编辑器左上角开关决定**是否启用**；切到「编辑」写 Markdown，点「保存」。
-   右上角「← 返回」回到列表；**有未保存改动时第一次点会先提示，再点一次才离开**。
-4. 之后在该工作区里发消息，对话开始时会自动注入；顶部提示条会报告结果。
+1. 打开**设置**（侧边栏底部齿轮）→ 左侧「**工作区提示词**」。
+2. 首次使用点列表框右上方的「**管理工作区**」（与设置面板右上角「打开配置文件」对齐），勾选要管理的工作区 →「应用」。
+3. 回到列表，点击任一工作区：
+   - 点「编辑」写提示词，点右下角「保存」；
+   - 点「浏览」查看 Markdown 渲染效果；
+   - 打开提示词框右上角开关以启用注入；
+   - 左上角「← 返回」回到列表。
+4. 在该工作区里发消息，对话开始时提示词即被注入（无需任何额外操作）。
 
-> 列表为空？说明当前还没有任何工作区。先创建或打开一个工作区，再回到这一页。
+> 列表为空？说明还没有添加工作区：先用「管理工作区」勾选，或先在侧边栏创建/打开一个工作区。
 
-## 文件与状态
+## 数据与配置
 
 | 路径 | 作用 |
 |---|---|
-| `prompt/<工作区名>.md` | 该工作区的提示词正文（Markdown） |
-| `state/enabled.json` | 启用开关：`{ "<工作区id>": true }`，只记录打开的工作区 |
-| `state/files.json` | 工作区 id → 文件名的持久映射（改名后文件不搬家） |
+| `prompt/<工作区名>.md` | 每个工作区的提示词正文（UTF-8 Markdown） |
+| `state/workspaces.json` | 已添加的工作区、文件名映射、添加时间 |
+| `state/enabled.json` | 启用开关（只记录打开的） |
 
-文件名取工作区标题并做净化：去掉 `\ / : * ? " < > |` 与控制字符、首尾空白与点，最长 80 字符；
-标题不可用时回退到工作区 id；同标题的不同工作区依次得到 `-2`、`-3`。
-提示词目录可用环境变量 `DSH_WORKSPACE_PROMPT_DIR`（须为绝对路径）覆盖。
+- 目录默认在**插件包根**下（即 `...\dsh-workspace-prompt\prompt\`、`...\state\`），不存在时自动创建。
+- 文件名由工作区名净化生成；同名工作区自动追加 `-2`、`-3`；工作区改名不会移动文件（映射保存在状态文件里）。
+- 可选配置（写入 profile 的 `cordis.patch.yml`，覆盖插件行 config）：
+  ```yaml
+  - id: dsh-workspace-prompt
+    config:
+      promptDirectory: 'D:\my-prompts'   # 绝对路径，默认 <插件包根>/prompt
+      stateDirectory: 'D:\my-prompts-state'
+  ```
+- 也可用环境变量 `DSH_WORKSPACE_PROMPT_DIR`（绝对路径）覆盖提示词目录。
 
-## 注入方式
+## 提示词会出现在对话里吗？
 
-Host 半用 `ctx.systemPrompt.context()` 注册一条名为 `workspace-prompt:current` 的
-**运行时上下文**，位置紧邻「当前工作目录」之前：
+**不会作为对话气泡出现**，也不占一条聊天消息。但需要如实说明：DSH 会把本次请求的**运行时上下文快照**写进会话日志（会话日志是唯一事实来源），Web 端在 Chat 视图**不显示普通 context 行**；在 Trajectory / 会话日志检查视图里可以看到快照内容。这是 DSH 运行时上下文的通用行为（内置的「当前工作目录」等上下文同样如此），不是本插件额外添加的对话行。
 
-- 会话按 `header.cwd` 解析到所属工作区（`ctx.workspaceRegistry.resolveByPath`）；
-- 只有该工作区开关为**开**且正文非空时才注入；
-- 每次模型步骤都会重新求值 → 「每一次对话开始」必然带上最新内容；
-- 每次求值都会在 Host 侧记一条判定记录（注入成功，或未注入的原因），
-  浏览器半据此报告结果——这就是顶部提示条的信息来源。
+## 兼容性
 
-### 提示词会不会出现在对话里？
+- 面向 DeepSeek Harness **0.2.1-rc.2** 开发；Web 与 Desktop 使用同一套 Client 模块体系与 Host 服务，因此同一插件包在两端通用（各自 profile 安装一次）。
+- 只用公开扩展点：`settings.section` 插槽、`ctx.systemPrompt.context()`、`ctx.connection.fetch`、`ctx.workspaceRegistry`；**不修改 deepseek-harness 本体**。
+- 零第三方依赖（Host 只用 Node 内置模块，Client 只用平台 `react`），降低未来 DSH 升级的破坏面；状态文件与 HTTP 响应带 `version: 1`，读取端容错。
 
-**不会作为对话气泡出现**，正文也不占一条聊天消息。但需要如实说明一点：
-DSH 会把本次请求的运行时上下文快照落进会话日志，Web 端把它渲染成一条**折叠行**
-（标题形如「上下文注入 · <工作区名>」）。**展开这条折叠行就能看到提示词正文。**
+## 常见问题
 
-这是 DSH 运行时上下文的通用行为（`working-directory` 等内置上下文同样如此），
-本插件的工作区提示词沿用同一机制。如果你的场景要求正文**绝对不可见**，
-请不要启用本插件——按设计它做不到这一点。
-
-## 数据接口
-
-浏览器半通过 Connection 已鉴权的 `/api` 通道与 Host 通信（同源 `fetch`）：
-
-| 路由 | 方法 | 作用 |
-|---|---|---|
-| `/api/workspacePrompt/workspaces` | GET | 设置页列表：全部工作区 + 开关 + 字数（不含正文） |
-| `/api/workspacePrompt/content?workspaceId=…` | GET | 读取某工作区的正文、开关、文件名 |
-| `/api/workspacePrompt/save` | POST | 保存正文（`workspaceId` 或 `sessionId`） |
-| `/api/workspacePrompt/enable` | POST | 切换启用开关（`workspaceId` 或 `sessionId`） |
-| `/api/workspacePrompt/latest` | GET | **全局**最近一次成功注入（无入参）——提示条的数据源 |
-| `/api/workspacePrompt/state?sessionId=…` | GET | 按会话读正文、开关、文件名 |
-| `/api/workspacePrompt/injection?sessionId=…` | GET | 该会话最近一次注入判定结果 |
-
-失败一律返回 `{ error: { code, message } }`，窗口把 `message` 直接显示在底部状态栏。
-
-> 提示条走 `/latest`（**全局、无入参**），因此**不需要你先点开过任何东西**——
-> 只要某个工作区启用了提示词，你在里面发消息后的注入都会被播报。
-> 这是刻意设计：早期版本靠"点过某个会话行"才知道该看哪个会话，那条链已废弃。
-
-## 文件结构
-
-```
-dsh-workspace-prompt/
-├── package.json             清单：dsh.bundle.patch + dsh.client
-├── cordis.patch.yml         Loader 补丁：插入一行 Host 插件
-├── index.js                 Host 半入口：组装 + 注入注册 + 路由注册
-├── host/
-│   ├── prompt-store.js      正文读写、文件名净化与去重
-│   ├── enable-store.js      state/enabled.json
-│   ├── workspace-resolver.js 会话 → 工作区（同步缓存 + 异步预热）
-│   ├── injection-registry.js 每次判定结果（供反馈）
-│   └── api-routes.js        /api/workspacePrompt/*
-├── client.js                浏览器半入口：加载子模块 + 注册设置页与提示条
-├── client.settings.js       设置页：工作区列表 ⇄ 内嵌编辑器
-├── client.api.js            /api 调用封装
-├── client.store.js          当前编辑目标 + 提示条通知队列 + 注入账本
-├── client.dialog.js         内嵌编辑器组件（`WorkspacePromptEditor`）
-├── client.toast.js          注入结果提示条（唯一的浮层）
-├── client.markdown.js       轻量 Markdown 渲染（不渲染原始 HTML）
-├── client.icons.js          内联 SVG 图标
-├── client.styles.js         `.dwp-` 样式（只用主题令牌）
-├── locale/{zh,en}.json      插件显示名与说明
-├── icon.svg                 插件图标
-├── prompt/                  提示词正文
-├── state/                   开关与文件名映射
-└── docs/{PLAN.md,VERIFY.md} 工程规划与验证报告
-```
-
-> 文件名 `client.dialog.js` 是历史遗留（第一版它是模态对话框）。它现在的导出是
-> `WorkspacePromptEditor`，**与浮层无关**——编辑器内嵌在设置页里。
->
-> 第一版的 `client.row-action.js`（会话行行尾按钮）与旧的 `client/` 子目录都**已删除**。
-
-`client.<名字>.js` 是**包内子模块**，不是普通源码目录：DSH 的客户端模块系统只允许
-`client.<名字>.js` 这种命名，并要求它们与 `client.js` 一样放在**包根**，由 `client.js`
-通过 `require.async('./client.<名字>.js')` 加载。因此本插件**零构建**——不需要打包器。
-
-## 依赖的宿主扩展点
-
-- `settings.section`（设置面板的一页；由 `@deepseek-ai/dsh-client-ui-settings` 声明）
-- `shell.overlay`（窗口与提示条）
-
-两者都是 DSH **已官方声明**的插槽，因此本插件**不修改 deepseek-harness 的任何文件**。
-
-> 说明：工作区行 “...” 菜单（含「重命名 / 删除工作区」）在 DSH 中是**硬编码且未声明槽位**的，
-> 工作区行本身也没有任何槽位（`ProjectRowItem` 里一次 `renderSlot` 都没有），
-> 而插槽系统只允许注册到已声明的槽位。所以侧边栏里**挂不上**工作区级的按钮，
-> 入口因此放在设置面板里。
+- **设置侧边栏看不到「工作区提示词」**：先关闭并重新打开设置面板；仍看不到则刷新页面（Client 部分由浏览器的模块表加载，页面需要重新加载才会挂载）。若仍缺失，检查「设置 → 插件」里本插件是否已安装并启用。
+- **刚更新过插件文件后行为没变**：Client chunk 需要页面重新加载才能生效（Host 会通过 HMR 重新发布，通常自动重载插件；否则刷新页面即可）；Host 半的数据接口无需重启。
 
 ## 卸载
 
-在 Plugins 页面移除本 bundle 即可：Host 半的提示词上下文与七条路由随 Cordis effect 一起注销，
-浏览器半的设置页、窗口与提示条随之消失；`prompt/` 与 `state/` 下的文件保留在原地。
+在插件管理页移除本 bundle 即可：Host 的运行时上下文/路由、Client 的设置页随插件卸载消失；`prompt/` 与 `state/` 数据保留在原地（可手动备份或删除）。
+
+## 开发与测试
+
+- 结构：`index.js`（Host 组装）、`host/`（9 个模块）、`client.js`（Client 入口）、`client.*.js`（chunk 模块）、`docs/`（规划 / 契约 / 架构 / API / 验证）。
+- 详见 `docs/ARCHITECTURE.md`、`docs/API.md`、`docs/CONTRACTS.md`。
+- 本插件无需构建：Client chunk 由 DSH 的 Client 模块表直接加载。
+- 测试文件在工程上级目录的 `CreateDSHplugins/temp&test/`（不随插件包发布）。
+- 验证记录与复跑命令见 `docs/VERIFY.md`（含 live 安装、插槽注册、真实会话注入 E2E 与会话日志证据）。
+
+## License
+
+MIT
