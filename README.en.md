@@ -20,7 +20,7 @@ This is a standard DSH bundle (`dsh.bundle.patch` + `dsh.client` in `package.jso
 ### A. Plugin manager (recommended)
 
 1. Open DSH Settings → Plugins;
-2. Add and install the local directory `E:\DSHworkspaces\CreateDSHplugins\dsh-workspace-prompt`;
+2. Add and install the local directory;
 3. Refresh the page — **Workspace prompt** appears in Settings.
 
 > Installation is performed by the DSH plugin manager against the current profile (install once per profile: web / desktop). It never modifies deepseek-harness source files.
@@ -28,7 +28,7 @@ This is a standard DSH bundle (`dsh.bundle.patch` + `dsh.client` in `package.jso
 ### B. CLI (Web profile only)
 
 ```powershell
-dsh plugin --profile web add E:\DSHworkspaces\CreateDSHplugins\dsh-workspace-prompt
+dsh plugin --profile web add <your path>
 ```
 
 > **Desktop exception**: `profiles/desktop` is managed exclusively by the Electron application, so a
